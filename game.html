@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>speed3d</title>
+		<meta name="language" content="fr" />
+		<meta name="keywords" content="javascript, gamepad, vanilla, " />
+		<meta name="author" content="patobeur" />
+		<meta name="description" content="Testing 3d with gamepad inputs" />
+		<meta property="og:title" content="3D with gamepad inputs" />
+		<meta property="og:description" content="Testing 3d with gamepad inputs" />
+		<meta property="og:image" content="speed.jpg" />
+		<meta property="og:url" content="#" />
+		<meta property="og:type" content="website" />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="Ma page web en 3D" />
+		<meta name="twitter:description" content="Testing 3d with gamepad inputs" />
+		<meta name="twitter:image" content="speed.jpg" />
+		<meta name="robots" content="index,follow" />
+
+		<style>
+			body {
+				margin: 0;
+			}
+			.links,
+			.positions {
+				position: absolute;
+				bottom: 5px;
+				right: 5px;
+			}
+			.positions {
+				left: 5px;
+				right: initial;
+				background-color: red;
+			}
+
+			.link,
+			.pos {
+				height: 25px;
+				background-color: white;
+			}
+			#playermodesmodal {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				height: 100%;
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			#playermodesmodal.hidden {
+				display: none;
+			}
+			.playermodes {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 10px;
+			}
+			.playermode {
+				width: 150px;
+				aspect-ratio: 1/1;
+				border: 1px solid black;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 50%;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script src="/three/three.min.js"></script>
+		<script src="/three/OrbitControls.js"></script>
+		<script src="/functions/modals.js"></script>
+		<script src="/functions/spawner.js"></script>
+		<script src="/objects/inputs.js"></script>
+		<script src="/objects/three.js"></script>
+		<script src="/objects/archetypes.js"></script>
+		<script src="/functions/gravity.js"></script>
+		<script src="/functions/plateforms.js"></script>
+		<script src="main.js"></script>
+		<!-- <div class="links">
+			<div class="link"><a href="exo1.html">Exo 1</a></div>
+			<div class="link"><a href="exo2.html">Exo 2</a></div>
+			<div class="link"><a href="exo3.html">Exo 3</a></div>
+		</div> -->
+		<div class="positions">
+			<div class="pos" id="position"></div>
+		</div>
+		<div id="playermodesmodal" class="hidden">
+			<div class="playermodes">
+				<div class="playermode" id="player1">One<br />Player</div>
+				<div class="playermode" id="player2">Two<br />Players</div>
+			</div>
+		</div>
+	</body>
+</html>
