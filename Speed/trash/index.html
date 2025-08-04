@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>ma page web en 3d</title>
+		<style>
+			body {
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script src="three.min.js"></script>
+		<script src="OrbitControls.js"></script>
+		<script>
+			window.onload = function init() {
+				const scene = new THREE.Scene();
+				const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+				camera.position.x = 0;
+				camera.position.y = 0;
+				camera.position.z = 10;
+				const renderer = new THREE.WebGLRenderer({ antialias: true });
+				renderer.setSize(window.innerWidth, window.innerHeight);
+
+				renderer.outputEncoding = THREE.sRGBEncoding;
+				renderer.shadowMap.enabled = true;
+				renderer.setPixelRatio(window.devicePixelRatio);
+
+				document.body.appendChild(renderer.domElement);
+
+				// OrbitControl - need camera and renderer
+				const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+				// set up ambient light
+				const ambient = new THREE.AmbientLight(0xffffff, 0.1);
+				scene.add(ambient);
+
+				// set up spot light + helper
+				const spotLight = new THREE.SpotLight(0xffffff, 1);
+				spotLight.position.set(0, 0, 20);
+				spotLight.angle = Math.PI / 4;
+				spotLight.penumbra = 0.1;
+				spotLight.decay = 2;
+				spotLight.distance = 200;
+
+				spotLight.castShadow = true;
+				spotLight.shadow.mapSize.width = 512;
+				spotLight.shadow.mapSize.height = 512;
+				spotLight.shadow.camera.near = 1;
+				spotLight.shadow.camera.far = 200;
+				spotLight.shadow.focus = 1;
+				// scene.add(spotLight);
+
+				const slHelper = new THREE.SpotLightHelper(spotLight);
+				scene.add(spotLight, slHelper, spotLight.target);
+
+
+
+				// set up red box mesh
+				const bg1 = new THREE.BoxGeometry(1, 1, 1);
+				const bm1 = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+				const boxMesh1 = new THREE.Mesh(bg1, bm1);
+				boxMesh1.castShadow = true;
+				boxMesh1.position.x = -2;
+				boxMesh1.position.y = 0;
+				boxMesh1.position.z = 2;
+				scene.add(boxMesh1);
+
+				// set up green box mesh
+				const bg2 = new THREE.BoxGeometry(1, 1, 1);
+				const bm2 = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+				const boxMesh2 = new THREE.Mesh(bg2, bm2);
+				boxMesh2.castShadow = true;
+				boxMesh2.position.x = 0;
+				boxMesh2.position.y = 0;
+				boxMesh2.position.z = 2;
+				scene.add(boxMesh2);
+
+				// set up blue box mesh
+				const bg3 = new THREE.BoxGeometry(1, 1, 1);
+				const bm3 = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+				const boxMesh3 = new THREE.Mesh(bg3, bm3);
+				boxMesh3.castShadow = true;
+				boxMesh3.position.x = 2;
+				boxMesh3.position.y = 0;
+				boxMesh3.position.z = 2;
+				scene.add(boxMesh3);
+
+
+
+				// set up ground
+				const groundGeometry = new THREE.BoxGeometry(9, 9, .5);
+				const groundMaterial = new THREE.MeshPhongMaterial({ color: 0xfafafa });
+				const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+				groundMesh.receiveShadow = true;
+				//groundMesh.rotation.x =( Math.PI/2);
+				groundMesh.position.z = -2;
+				scene.add(groundMesh);
+				scene.receiveShadow = true;
+				scene.castShadow = true;
+
+
+				function animate() {
+					requestAnimationFrame(animate);
+
+					camera.updateProjectionMatrix();
+					controls.update();
+					renderer.render(scene, camera);
+				}
+
+				animate();
+
+				window.addEventListener('resize', onWindowResize);
+				function onWindowResize() {
+					camera.aspect = window.innerWidth / window.innerHeight;
+					camera.updateProjectionMatrix();
+					renderer.setSize(window.innerWidth, window.innerHeight);
+				}
+			}
+		</script>
+	</body>
+
+</html>
