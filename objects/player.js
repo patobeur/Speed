@@ -13,6 +13,7 @@ const archetype = {
 			color: 0x2500ff,
 			archetype: "warrior",
 			name: "Alice",
+			backwardMalus: 0.7, // 70% de malus à 180°
 		},
 		healer: {
 			playerSizes: { w: 0.6, h: 0.6, d: 0.2 },
@@ -27,6 +28,7 @@ const archetype = {
 			color: 0x0000ff,
 			archetype: "healer",
 			name: "Bob",
+			backwardMalus: 0.3, // 30% de malus à 180°
 		},
 	},
 	init: function () {},
@@ -98,16 +100,51 @@ const playerInt = {
 		p.div.textContent = texte;
 	},
 	updatePlayerMalusIfMovingBackwards(p) {
+		if (p && p.oldPos) {
+			const velocity = new THREE.Vector3().subVectors(
+				p.group.position,
+				p.oldPos
+			);
+			const dot = velocity.dot(p.mouseDirection);
+			if (dot < 0) {
+				p.malusV3 = velocity.clone();
+			} else {
+				p.malusV3 = new THREE.Vector3(0, 0, 0);
+			}
+			p.oldPos.copy(p.group.position);
+		}
+	},
+	updatePlayerMalusFromAngle(p) {
 		const velocity = new THREE.Vector3().subVectors(
 			p.group.position,
 			p.oldPos
 		);
-		const dot = velocity.dot(p.mouseDirection);
-		if (dot < 0) {
-			p.malusV3 = velocity.clone();
-		} else {
+
+		// On ne fait rien si le joueur ne bouge pas
+		if (velocity.lengthSq() === 0) {
+			p.malusFactor = 1;
 			p.malusV3 = new THREE.Vector3(0, 0, 0);
+			p.oldPos.copy(p.group.position);
+			return;
 		}
+
+		// On normalise les deux vecteurs
+		const v1 = velocity.clone().normalize();
+		const v2 = p.mouseDirection.clone().normalize();
+
+		// Angle en radians
+		let angle = Math.acos(THREE.MathUtils.clamp(v1.dot(v2), -1, 1)); // sécurité clamp
+
+		// Angle en degrés
+		// const degrees = THREE.MathUtils.radToDeg(angle);
+
+		// Calcul du malus basé sur l’angle (0 à PI)
+		const malusStrength = (angle / Math.PI) * p.datas.backwardMalus;
+
+		// MalusFactor = 1 - malus
+		p.malusFactor = 1 - malusStrength;
+		p.malusV3 = velocity.clone().multiplyScalar(malusStrength);
+
 		p.oldPos.copy(p.group.position);
 	},
 	updatePlayerRotationFromMouse: function (p, camera) {
@@ -193,7 +230,8 @@ const playerInt = {
 				case 0:
 					// if (gamepads && P2) handleGamepadInput(P2);
 					playerInt.updatePlayerRotationFromMouse(p, camera);
-					playerInt.updatePlayerMalusIfMovingBackwards(p);
+					// if (p.oldPos) playerInt.updatePlayerMalusIfMovingBackwards(p);
+					if (p.oldPos) playerInt.updatePlayerMalusFromAngle(p);
 					Inputs.handleKeyboardInput(p);
 					if (p.datas.isMoving || p.datas.isFalling || p.datas.isJumping) {
 						threeInt.lightInt.follow(p);

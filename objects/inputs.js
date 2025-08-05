@@ -18,22 +18,23 @@ const Inputs = {
 
 	handleKeyboardInput: function (p) {
 		p.oldPos = p.group.position.clone();
-
+		const factor = p.malusFactor !== undefined ? p.malusFactor : 1;
+		console.log(p.malusFactor);
 		// Déplacer le cube vert en fonction des fleches ou touches Q, S, D, Z
 		if (Inputs.touches.ArrowUp || Inputs.touches[Inputs.keys["UP"]]) {
-			p.group.position.y += p.datas.moveSpeed.y;
+			p.group.position.y += p.datas.moveSpeed.y * factor;
 			p.datas.isMoving = true;
 		}
 		if (Inputs.touches.ArrowDown || Inputs.touches[Inputs.keys["DOWN"]]) {
-			p.group.position.y -= p.datas.moveSpeed.y;
+			p.group.position.y -= p.datas.moveSpeed.y * factor;
 			p.datas.isMoving = true;
 		}
 		if (Inputs.touches.ArrowLeft || Inputs.touches[Inputs.keys["LEFT"]]) {
-			p.group.position.x -= p.datas.moveSpeed.x;
+			p.group.position.x -= p.datas.moveSpeed.x * factor;
 			p.datas.isMoving = true;
 		}
 		if (Inputs.touches.ArrowRight || Inputs.touches[Inputs.keys["RIGHT"]]) {
-			p.group.position.x += p.datas.moveSpeed.x;
+			p.group.position.x += p.datas.moveSpeed.x * factor;
 			p.datas.isMoving = true;
 		}
 		if (Inputs.touchesCodes[Inputs.keys["JUMP"]] && !p.datas.isJumping) {
