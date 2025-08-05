@@ -28,22 +28,28 @@
 			body {
 				margin: 0;
 			}
-			.links,
-			.positions {
+			.links {
 				position: absolute;
 				bottom: 5px;
-				right: 5px;
-			}
-			.positions {
 				left: 5px;
-				right: initial;
 				background-color: red;
 			}
-
-			.link,
-			.pos {
+			.link {
 				height: 25px;
 				background-color: white;
+			}
+			.positions {
+				width: 25px;
+				height: 25px;
+				position: absolute;
+				background-color: red;
+			}
+			.card {
+				max-width: 500px;
+				position: absolute;
+				background-color: white;
+				padding: 5px;
+				border-radius: 9px;
 			}
 			#playermodesmodal {
 				position: absolute;
@@ -80,22 +86,21 @@
 	<body>
 		<script src="/Speed/three/three.min.js"></script>
 		<script src="/Speed/three/OrbitControls.js"></script>
+
 		<script src="/Speed/functions/modals.js"></script>
-		<script src="/Speed/functions/spawner.js"></script>
+
 		<script src="/Speed/objects/inputs.js"></script>
 		<script src="/Speed/objects/three.js"></script>
-		<script src="/Speed/objects/archetypes.js"></script>
-		<script src="/Speed/functions/gravity.js"></script>
-		<script src="/Speed/functions/plateforms.js"></script>
+		<script src="/Speed/objects/player.js"></script>
+
 		<script src="/Speed/main.js"></script>
+
 		<!-- <div class="links">
 			<div class="link"><a href="exo1.html">Exo 1</a></div>
 			<div class="link"><a href="exo2.html">Exo 2</a></div>
 			<div class="link"><a href="exo3.html">Exo 3</a></div>
 		</div> -->
-		<div class="positions">
-			<div class="pos" id="position"></div>
-		</div>
+
 		<div id="playermodesmodal" class="hidden">
 			<div class="playermodes">
 				<div class="playermode" id="player1">One<br />Player</div>

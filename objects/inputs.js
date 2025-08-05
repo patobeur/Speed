@@ -1,4 +1,7 @@
 const Inputs = {
+	isGamepad: false,
+	mouse: new THREE.Vector2(),
+	users: { keyboard: undefined, gamepad: undefined },
 	user: undefined,
 	keys: {
 		UP: "z",
@@ -12,57 +15,124 @@ const Inputs = {
 	// Objets pour stocker l'état des touches
 	touches: {},
 	touchesCodes: {},
-	handleKeyboardInput: function (localPlayer) {
+
+	handleKeyboardInput: function (p) {
+		p.oldPos = p.group.position.clone();
+
 		// Déplacer le cube vert en fonction des fleches ou touches Q, S, D, Z
 		if (Inputs.touches.ArrowUp || Inputs.touches[Inputs.keys["UP"]]) {
-			localPlayer.group.position.y += localPlayer.datas.moveSpeed.y;
-			localPlayer.datas.isMoving = true;
+			p.group.position.y += p.datas.moveSpeed.y;
+			p.datas.isMoving = true;
 		}
 		if (Inputs.touches.ArrowDown || Inputs.touches[Inputs.keys["DOWN"]]) {
-			localPlayer.group.position.y -= localPlayer.datas.moveSpeed.y;
-			localPlayer.datas.isMoving = true;
+			p.group.position.y -= p.datas.moveSpeed.y;
+			p.datas.isMoving = true;
 		}
 		if (Inputs.touches.ArrowLeft || Inputs.touches[Inputs.keys["LEFT"]]) {
-			localPlayer.group.position.x -= localPlayer.datas.moveSpeed.x;
-			localPlayer.datas.isMoving = true;
+			p.group.position.x -= p.datas.moveSpeed.x;
+			p.datas.isMoving = true;
 		}
 		if (Inputs.touches.ArrowRight || Inputs.touches[Inputs.keys["RIGHT"]]) {
-			localPlayer.group.position.x += localPlayer.datas.moveSpeed.x;
-			localPlayer.datas.isMoving = true;
+			p.group.position.x += p.datas.moveSpeed.x;
+			p.datas.isMoving = true;
 		}
-		if (
-			Inputs.touchesCodes[Inputs.keys["JUMP"]] &&
-			!localPlayer.datas.isJumping
-		) {
-			localPlayer.datas.velocity.z = localPlayer.datas.jumpForce;
-			localPlayer.datas.isJumping = true;
+		if (Inputs.touchesCodes[Inputs.keys["JUMP"]] && !p.datas.isJumping) {
+			p.datas.velocity.z = p.datas.jumpForce;
+			p.datas.isJumping = true;
 		}
-		if (Inputs.touches[Inputs.keys["ROTATELEFT"]]) {
-			rotateWorld("left");
-			localPlayer.datas.isRotating = true;
+		// if (Inputs.touches[Inputs.keys["ROTATELEFT"]]) {
+		// 	rotateWorld("left");
+		// 	p.datas.isRotating = true;
+		// }
+		// if (Inputs.touches[Inputs.keys["ROTATERIGHT"]]) {
+		// 	rotateWorld("right");
+		// 	p.datas.isRotating = true;
+		// }
+	},
+	handleGamepadInput: function (p) {
+		if (!gamepads) return;
+		const gp = gamepads[0]; // première manette
+		if (!gp) return;
+
+		const threshold = 0.1; // zone morte
+		const axisX = gp.axes[0]; // gauche/droite (stick gauche)
+		const axisY = gp.axes[1]; // haut/bas (stick gauche)
+
+		if (gp.buttons[6].pressed && axisX < -threshold) {
+			p.group.position.x -= p.datas.playerMoveSpeeds.x;
+			p.datas.isMoving = true;
 		}
-		if (Inputs.touches[Inputs.keys["ROTATERIGHT"]]) {
-			rotateWorld("right");
-			localPlayer.datas.isRotating = true;
+		if (gp.buttons[6].pressed && axisX > threshold) {
+			p.group.position.x += p.datas.playerMoveSpeeds.x;
+			p.datas.isMoving = true;
+		}
+		if (gp.buttons[6].pressed && axisY < -threshold) {
+			p.group.position.y += p.datas.playerMoveSpeeds.y;
+			p.datas.isMoving = true;
+		}
+		if (gp.buttons[6].pressed && axisY > threshold) {
+			p.group.position.y -= p.datas.playerMoveSpeeds.y;
+			p.datas.isMoving = true;
+		}
+
+		// Bouton A (standard XBox : index 0) → sauter
+		if (gp.buttons[0].pressed && !p.datas.isJumping) {
+			p.datas.velocity.z = p.datas.jumpForce;
+			p.datas.isJumping = true;
+			console.log("A");
+		}
+		// Bouton B (standard XBox : index 1)
+		if (gp.buttons[1].pressed) {
+			console.log("B");
+		}
+		// Bouton X (standard XBox : index 2)
+		if (gp.buttons[2].pressed) {
+			console.log("X");
+		}
+		// Bouton Y (standard XBox : index 3)
+		if (gp.buttons[3].pressed) {
+			console.log("Y");
+		}
+		if (gp.buttons[4].pressed) {
+			console.log("LB");
+		}
+		if (gp.buttons[5].pressed) {
+			console.log("RB");
+		}
+		if (gp.buttons[6].pressed) {
+			console.log("LT");
+		}
+		if (gp.buttons[7].pressed) {
+			console.log("RT");
+		}
+		if (gp.buttons[8].pressed) {
+			console.log("BACK");
+		}
+		if (gp.buttons[9].pressed) {
+			console.log("START");
+		}
+		if (gp.buttons[10].pressed) {
+			console.log("10");
+		}
+		if (Math.abs(axisX) > threshold || Math.abs(axisY) > threshold) {
+			let angle = Math.atan2(axisY, axisX);
+			p.group.rotation.z = -angle;
 		}
 	},
-	setUser: (localPlayer) => {
-		this.user = localPlayer;
+
+	init: function () {
+		window.addEventListener("gamepadconnected", (e) => {
+			console.log("Manette connectée :", e.gamepad);
+			Inputs.isGamepad = navigator.getGamepads();
+			openModal();
+		});
+		window.addEventListener("gamepaddisconnected", (e) => {
+			console.log("Manette déconnectée :", e.gamepad);
+			Inputs.isGamepad = false;
+		});
+		window.addEventListener("mousemove", (event) => {
+			Inputs.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+			Inputs.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		});
 	},
 };
-
-function updatePlayerRotationFromKeyboard(localPlayer) {
-	let dx = 0;
-	let dy = 0;
-
-	if (Inputs.touches[Inputs.keys["LEFT"]]) dx -= 1;
-	if (Inputs.touches[Inputs.keys["RIGHT"]]) dx += 1;
-	if (Inputs.touches[Inputs.keys["UP"]]) dy += 1;
-	if (Inputs.touches[Inputs.keys["DOWN"]]) dy -= 1;
-
-	// Si aucune direction, ne pas modifier la rotation
-	if (dx === 0 && dy === 0) return;
-
-	const angle = Math.atan2(dy, dx); // angle en radians
-	localPlayer.group.rotation.z = -angle;
-}
