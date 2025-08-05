@@ -1,3 +1,4 @@
+let playerModalDiv = undefined;
 function openModal() {
 	if (playerModalDiv) {
 		playerModalDiv.classList.remove("hidden");

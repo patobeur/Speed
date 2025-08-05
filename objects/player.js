@@ -56,13 +56,12 @@ const playerInt = {
 		playerInt.players.push(p);
 
 		playerInt.createDiv(p);
-		console.log("creating: " + p.datas.name + " " + p.datas.archetype);
+		if (consoleOn)
+			console.log("creating: " + p.datas.name + " " + p.datas.archetype);
 	},
 	init: function () {
 		playerInt.addPosDiv();
 		playerInt.newPlayer();
-
-		// if (nbPlayer && nbPlayer == 2) playerInt.createOne(playerInt.player_1);
 	},
 	setPlayerMesh: function (p) {
 		p.mesh = new THREE.Mesh(
@@ -238,17 +237,16 @@ const playerInt = {
 						threeInt.cameraInt.follow(p);
 						p.datas.isMoving = false;
 						playerInt.displayPlayerCoords(p);
-						console.log(
-							"P" +
-								p.index +
-								": " +
-								p.datas.name +
-								" (" +
-								archetype +
-								" lv0) ismooving, "
-						);
-						console.log(p.oldPos);
-						console.log(p.group.position);
+						if (consoleOn)
+							console.log(
+								"P" +
+									p.index +
+									": " +
+									p.datas.name +
+									" (" +
+									archetype +
+									" lv0) ismooving, "
+							);
 					}
 				case 1:
 					break;

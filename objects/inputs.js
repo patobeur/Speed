@@ -19,7 +19,6 @@ const Inputs = {
 	handleKeyboardInput: function (p) {
 		p.oldPos = p.group.position.clone();
 		const factor = p.malusFactor !== undefined ? p.malusFactor : 1;
-		console.log(p.malusFactor);
 		// Déplacer le cube vert en fonction des fleches ou touches Q, S, D, Z
 		if (Inputs.touches.ArrowUp || Inputs.touches[Inputs.keys["UP"]]) {
 			p.group.position.y += p.datas.moveSpeed.y * factor;
@@ -80,60 +79,71 @@ const Inputs = {
 		if (gp.buttons[0].pressed && !p.datas.isJumping) {
 			p.datas.velocity.z = p.datas.jumpForce;
 			p.datas.isJumping = true;
-			console.log("A");
+			if (consoleOn) console.log("A");
 		}
 		// Bouton B (standard XBox : index 1)
 		if (gp.buttons[1].pressed) {
-			console.log("B");
+			if (consoleOn) console.log("B");
 		}
 		// Bouton X (standard XBox : index 2)
 		if (gp.buttons[2].pressed) {
-			console.log("X");
+			if (consoleOn) console.log("X");
 		}
 		// Bouton Y (standard XBox : index 3)
 		if (gp.buttons[3].pressed) {
-			console.log("Y");
+			if (consoleOn) console.log("Y");
 		}
 		if (gp.buttons[4].pressed) {
-			console.log("LB");
+			if (consoleOn) console.log("LB");
 		}
 		if (gp.buttons[5].pressed) {
-			console.log("RB");
+			if (consoleOn) console.log("RB");
 		}
 		if (gp.buttons[6].pressed) {
-			console.log("LT");
+			if (consoleOn) console.log("LT");
 		}
 		if (gp.buttons[7].pressed) {
-			console.log("RT");
+			if (consoleOn) console.log("RT");
 		}
 		if (gp.buttons[8].pressed) {
-			console.log("BACK");
+			if (consoleOn) console.log("BACK");
 		}
 		if (gp.buttons[9].pressed) {
-			console.log("START");
+			if (consoleOn) console.log("START");
 		}
 		if (gp.buttons[10].pressed) {
-			console.log("10");
+			if (consoleOn) console.log("10");
 		}
 		if (Math.abs(axisX) > threshold || Math.abs(axisY) > threshold) {
 			let angle = Math.atan2(axisY, axisX);
 			p.group.rotation.z = -angle;
 		}
 	},
+	handleKeydown: function (event) {
+		Inputs.touches[event.key] = true;
+		Inputs.touchesCodes[event.code] = true;
+	},
+	handleKeyup: function (event) {
+		Inputs.touches[event.key] = false;
+		Inputs.touchesCodes[event.code] = false;
+	},
 
 	init: function () {
 		window.addEventListener("gamepadconnected", (e) => {
-			console.log("Manette connectée :", e.gamepad);
+			if (consoleOn) console.log("Manette connectée :", e.gamepad);
 			Inputs.isGamepad = navigator.getGamepads();
 			openModal();
 		});
 		window.addEventListener("gamepaddisconnected", (e) => {
-			console.log("Manette déconnectée :", e.gamepad);
+			if (consoleOn) console.log("Manette déconnectée :", e.gamepad);
 			Inputs.isGamepad = false;
 		});
 		window.addEventListener("mousemove", (event) => {
 			Inputs.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 			Inputs.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 		});
+
+		window.addEventListener("keydown", Inputs.handleKeydown);
+		window.addEventListener("keyup", Inputs.handleKeyup);
 	},
 };

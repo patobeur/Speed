@@ -118,8 +118,9 @@ const threeInt = {
 		threeInt.scene.add(threeInt.world);
 
 		threeInt.addPlateform();
+		window.addEventListener("resize", threeInt.onWindowResize);
 	},
-	addPlateform() {
+	addPlateform: function () {
 		threeInt.platforms.forEach((p) => {
 			const geom = new THREE.BoxGeometry(p.width, p.height, p.depth);
 			const mat = new THREE.MeshPhongMaterial({ color: p.color });
@@ -139,13 +140,18 @@ const threeInt = {
 			});
 		});
 	},
-	addRandomPlateform2platformMeshes() {
+	onWindowResize: function () {
+		threeInt.cameraInt.camera.aspect = window.innerWidth / window.innerHeight;
+		threeInt.cameraInt.camera.updateProjectionMatrix();
+		threeInt.renderer.setSize(window.innerWidth, window.innerHeight);
+	},
+	addRandomPlateform2platformMeshes: function () {
 		let currentAltitude = 3;
 		let startAt = 0;
 		for (let index = 0; index < 100; index++) {
 			let maxRangeAltitude = 3;
 			currentAltitude += Math.random() * maxRangeAltitude + 1;
-			// console.log(currentAltitude, index);
+
 			let randX = Math.random() * 5 - 2;
 			let randY = Math.random() * 5 - 2;
 			let randDepth = Math.random() * 10 - 2;
